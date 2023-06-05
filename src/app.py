@@ -1,38 +1,35 @@
-'''
+"""
  # @ Create Time: 2023-06-05 11:16:51.582403
-'''
+"""
 
 from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
+import waymoOpenDataset
+import extractStaticFeatures
 
 app = Dash(__name__, title="WaymoPathPredictionStudy")
 
 # Declare server for Heroku deployment. Needed for Procfile.
 server = app.server
 
-# assume you have a "long-form" data frame
-# see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
+data = waymoOpenDataset.getWaymoScenario(0, 1)
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
 
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+figure = extractStaticFeatures.getRoadFeaturesScatterPlot(3400, 1500, data)
 
-    html.Div(children='''
-        Dash: A web application framework for your data.
-    '''),
+app.layout = html.Div(
+    children=[
+        dcc.Markdown(
+            """
+                     # Plotly Path Prediction
+                     Auswählen der Endposition über die Spinner unter diesem Text.
+                     Bestätigen über den Bestätigungsknopf.
+                     """
+        ),
+        dcc.Graph(id="example-graph", figure=figure),
+    ]
+)
 
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
-])
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
+if __name__ == "__main__":
+    app.run_server(debug=True, port=8052)
