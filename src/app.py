@@ -5,10 +5,11 @@
 from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
-import waymoOpenDataset
-import extractStaticFeatures
-import extractAgentFeatures
-import prediction
+import src.waymoOpenDataset as waymoOpenDataset
+import src.extractStaticFeatures as extractStaticFeatures
+import src.extractAgentFeatures as extractAgentFeatures
+import src.prediction as prediction
+ 
 
 app = Dash(__name__, title="WaymoPathPredictionStudy")
 

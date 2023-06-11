@@ -1,4 +1,4 @@
-import sharedFunctionsPlotly
+import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 
 
@@ -23,14 +23,9 @@ def getPredictionFigure(
         x=x,
         y=y,
         hoverinfo="skip",
-        mode="markers",
+        mode="none",
         fill="toself",
-        marker={
-            "size": 1,
-            "opacity": 1,
-            "line": {"width": 2, "color": "lime"},
-            "color": "blue",
-        },
+        fillcolor='rgba(0,0,0, 1)',
     )
 
     return go.Figure(

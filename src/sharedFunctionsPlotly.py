@@ -1,8 +1,8 @@
 import plotly.graph_objects as go
 import math
 
-GRAPH_SIZE = 1500
-RANGE_DELTA = 200
+GRAPH_SIZE = 1000
+RANGE_DELTA = 100
 
 
 def getPlotLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
@@ -84,7 +84,7 @@ def getPolygonCoordsFromCenterCoords(
     Returns:
         _type_: _description_
     """
-    rad = (degrees) / 180 * math.pi  # the angle in rad instead of degrees
+    rad = (360 - degrees) / 180 * math.pi  # the angle in rad instead of degrees
 
     Rx1 = center_x - (width / 2 * math.cos(rad)) - (length / 2 * math.sin(rad))
     Ry1 = center_y + (width / 2 * math.sin(rad)) - (length / 2 * math.cos(rad))
@@ -114,7 +114,7 @@ def getPolygonCoordsFromCenterCoordsForMultipleInstances(
     Returns:
         _type_: _description_
     """
-    rad = (degrees) / 180 * math.pi  # the angle in rad instead of degrees
+    rad = (360 - degrees) / 180 * math.pi  # the angle in rad instead of degrees
 
     Rx1 = center_x - (width / 2 * math.cos(rad)) - (length / 2 * math.sin(rad))
     Ry1 = center_y + (width / 2 * math.sin(rad)) - (length / 2 * math.cos(rad))

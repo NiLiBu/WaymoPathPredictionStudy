@@ -1,5 +1,5 @@
 from waymo_open_dataset.protos import scenario_pb2
-import sharedFunctionsPlotly
+import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 from PIL import Image
 
@@ -67,7 +67,7 @@ def getRoadFeaturesScatterPlot(
         marker={
             "size": dotSize,
             "opacity": 1,
-            "line": {"width": 2, "color": "black"},
+            "line": {"width": 1, "color": "black"},
             "color": "black",
         },
     )
@@ -153,7 +153,7 @@ def getPolygonFeaturesScatterPlot(
         x=x_crosswalk,
         y=y_crosswalk,
         hoverinfo="skip",
-        mode="markers",
+        mode="none",
         fill="toself",
         marker={
             "size": 1,
@@ -167,7 +167,7 @@ def getPolygonFeaturesScatterPlot(
         x=x_speed_bump,
         y=y_speed_bump,
         hoverinfo="skip",
-        mode="markers",
+        mode="none",
         fill="toself",
         marker={
             "size": 1,
@@ -181,7 +181,7 @@ def getPolygonFeaturesScatterPlot(
         x=x_driveway,
         y=y_driveway,
         hoverinfo="skip",
-        mode="markers",
+        mode="none",
         fill="toself",
         marker={
             "size": 1,
@@ -266,8 +266,11 @@ def getStopSignScatterPlot(
         figure.add_layout_image(
             dict(
                 source=Image.open(
-                    "/home/studienarbeit/StudyWaymoPathPrediction/assets/stopSign.png"
+                    "assets/stopSign.png"
                 ),
+                # source=Image.open(
+                #     "/home/studienarbeit/StudyWaymoPathPrediction/WaymoPathPredictionStudy/assets/stopSign.png"
+                # ),
                 xref="x",
                 yref="y",
                 x=x[index],
