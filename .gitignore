@@ -1,3 +1,4 @@
-waymoDatasetFiles/motion_1_2_0.tfrecord-00000-of-01000
+assets/motion_1_2_0.tfrecord-00000-of-01000
 src/app.py
-waymoDatasetFiles/motion_1_2_0.tfrecord-00959-of-01000
+assets/motion_1_2_0.tfrecord-00959-of-01000
+*.pyc
