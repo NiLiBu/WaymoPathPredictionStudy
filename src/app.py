@@ -2,7 +2,8 @@
  # @ Create Time: 2023-06-05 11:16:51.582403
 """
 
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, Input, Output
+import random
 import plotly.express as px
 import pandas as pd
 import src.waymoOpenDataset as waymoOpenDataset
@@ -18,38 +19,51 @@ app = Dash(__name__, title="WaymoPathPredictionStudy")
 server = app.server
 
 
-data = waymoOpenDataset.getWaymoScenario(0, 5)
-trackCenter, trackSize, trackDirection, tracks = extractAgentFeatures.getRandomAgent(
-    scenario=data
-)
+def initApp():
+    
+    scenarioID = random.randint(1, 1000)
+    
+    data = waymoOpenDataset.getWaymoScenario(0, scenarioID)
+    trackCenter, trackSize, trackDirection, tracks = extractAgentFeatures.getRandomAgent(
+        scenario=data
+    )
 
-figureStreet = extractStaticFeatures.getRoadFeaturesScatterPlot(
-    trackCenter[0], trackCenter[1], data
-)
-figurePolygons = extractStaticFeatures.getPolygonFeaturesScatterPlot(
-    trackCenter[0], trackCenter[1], data
-)
-figureStopSign = extractStaticFeatures.getStopSignScatterPlot(
-    trackCenter[0], trackCenter[1], data
-)
+    global figureStreet
+    figureStreet = extractStaticFeatures.getRoadFeaturesScatterPlot(
+        trackCenter[0], trackCenter[1], data
+    )
+    
+    global figurePolygons
+    figurePolygons = extractStaticFeatures.getPolygonFeaturesScatterPlot(
+        trackCenter[0], trackCenter[1], data
+    )
+    
+    global figureStopSign
+    figureStopSign = extractStaticFeatures.getStopSignScatterPlot(
+        trackCenter[0], trackCenter[1], data
+    )
 
-figurePredict = prediction.getPredictionFigure(
-    x=trackCenter[0],
-    y=trackCenter[1],
-    rotation=trackDirection,
-    width=trackSize[0],
-    lenght=trackSize[1],
-    mapCenter_x=trackCenter[0],
-    mapCenter_y=trackCenter[1],
-)
+    global figurePredict
+    figurePredict = prediction.getPredictionFigure(
+        x=trackCenter[0],
+        y=trackCenter[1],
+        rotation=trackDirection,
+        width=trackSize[0],
+        lenght=trackSize[1],
+        mapCenter_x=trackCenter[0],
+        mapCenter_y=trackCenter[1],
+    )
 
-figureAgentsAndLaneStates = extractDynamicMapFeatures.getDynamicLaneStates(
-    trackCenter[0], trackCenter[1], data
-)
+    global figureAgentsAndLaneStates
+    figureAgentsAndLaneStates = extractDynamicMapFeatures.getDynamicLaneStates(
+        trackCenter[0], trackCenter[1], data
+    )
 
-predictionCoordinate_x = trackCenter[0]
-predictionCoordinate_y = trackCenter[1]
 
+    # predictionCoordinate_x = trackCenter[0]
+    # predictionCoordinate_y = trackCenter[1]
+
+initApp()
 
 app.layout = html.Div(
     children=[
@@ -76,6 +90,7 @@ app.layout = html.Div(
                         
                      """
         ),
+        html.Button("Neues Scenario", id="newScenario", n_clicks=0),
         
         dcc.Graph(
             id="Street",
@@ -105,6 +120,19 @@ app.layout = html.Div(
     ]
 )
 
+
+@app.callback(
+    Output("Street", "figure"),
+    Output("Polygon", "figure"),
+    Output("StopSign", "figure"),
+    Output("Predict", "figure"),
+    Output("Lanes", "figure"),
+    [Input("newScenario", "n_clicks")],
+)
+def updateScenarioSelected(n_clicks):
+    print("reload")
+    initApp()
+    return figureStreet, figurePolygons, figureStopSign, figurePredict, figureAgentsAndLaneStates
+
 if __name__ == "__main__":
     app.run_server(debug=True, port=8052)
-
