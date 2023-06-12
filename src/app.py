@@ -3,6 +3,7 @@
 """
 
 from dash import Dash, html, dcc, Input, Output
+import dash
 import random
 import plotly.express as px
 import pandas as pd
@@ -59,6 +60,14 @@ def initApp():
         mapCenter_x=trackCenter[0],
         mapCenter_y=trackCenter[1],
     )
+    
+    global figurePredictionDot
+    figurePredictionDot =  prediction.getPredictionDot(
+        x=trackCenter[0],
+        y=trackCenter[1],
+        mapCenter_x=trackCenter[0],
+        mapCenter_y=trackCenter[1],
+    )
 
     global figureAgentsAndLaneStates
     figureAgentsAndLaneStates = extractDynamicMapFeatures.getDynamicLaneStates(
@@ -83,6 +92,7 @@ app.layout = html.Div(
                      
                      Über erneutes Klicken des Abspielen knopfs kann der Datensatz erneut angesehen werden.
                      
+                     Für eine korrekte Funktionsweise 100% Skallierung beibehalten
                      
                      ### Legende
                      
@@ -126,40 +136,85 @@ app.layout = html.Div(
             figure=figureStopSign,
         ),
         dcc.Graph(
+            id="PredictionDot",
+            style={"display": "block", "position": "absolute", "width": "100%"},
+            figure=figurePredictionDot,
+        ),
+        dcc.Graph(
             id="Lanes",
             style={"display": "block", "position": "absolute", "width": "100%"},
             figure=figureAgentsAndLaneStates,
         ),
         dcc.Graph(
             id="Predict",
-            style={"display": "block", "position": "absolute", "width": "100%"},
+            style={"display": "block", "position": "absolute", "width": "100%", "top": "550px"},
             figure=figurePredict,
         ),
     ]
 )
 
+clicks = 0
 
 @app.callback(
     Output("Street", "figure"),
     Output("Polygon", "figure"),
     Output("StopSign", "figure"),
     Output("Predict", "figure"),
+    Output("PredictionDot", "figure"),
     Output("Lanes", "figure"),
-    [Input("newScenario", "n_clicks")],
+    [Input("newScenario", "n_clicks"), Input("Predict", "relayoutData")],
 )
-def guessScenarioSelected(n_clicks):
+def guessScenarioSelected(n_clicks, graphData):
     
-    print(metrics.calculateMissBoolean8s(
-            predictionCoordinate_x, 
-            predictionCoordinate_y, 
-            trackSpeed[0], 
-            trackSpeed[1], 
-            finalCoords[0], 
-            finalCoords[1]
+    global clicks
+    global predictionCoordinate_x
+    global predictionCoordinate_y
+    global figurePredictionDot
+    
+    if clicks != n_clicks:
+        clicks = n_clicks
+        print(metrics.calculateMissBoolean8s(
+                predictionCoordinate_x, 
+                predictionCoordinate_y, 
+                trackSpeed[0], 
+                trackSpeed[1], 
+                finalCoords[0], 
+                finalCoords[1]
+            )
         )
-    )
-    initApp()
-    return figureStreet, figurePolygons, figureStopSign, figurePredict, figureAgentsAndLaneStates
+        initApp()
+        return figureStreet, figurePolygons, figureStopSign, figurePredict, figurePredictionDot, figureAgentsAndLaneStates
+    
+    if graphData is not None:
+        data = graphData["shapes"][-1]
+        dx = data["x1"] - data["x0"]
+        dy = data["y1"] - data["y0"]
+        
+        
+        predictionCoordinate_x += dx
+        predictionCoordinate_y += dy
+        
+        figurePredictionDot = prediction.getPredictionDot(
+        x=predictionCoordinate_x,
+        y=predictionCoordinate_y,
+        mapCenter_x=trackCenter[0],
+        mapCenter_y=trackCenter[1],
+        )
+        
+        graphData = None
+        return figureStreet, figurePolygons, figureStopSign, figurePredict, figurePredictionDot, figureAgentsAndLaneStates
+    else:
+        return dash.no_update
+    
+        
+
+
+def dragAndDrop(graphData):
+    if graphData is None:
+        return dash.no_update
+    print(graphData)
+    
+    return figurePredict
 
 if __name__ == "__main__":
     app.run_server(debug=True, port=8052)

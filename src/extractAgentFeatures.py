@@ -29,49 +29,43 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
     for trackIndex, track in enumerate(scenario.tracks):
         trackIdList.append([trackIndex, track.id])
 
-    trackType = {
-        0: "Undefined",
-        1: "Vehicle",
-        2: "Pedestrian",
-        3: "Cyclist",
-        4: "Other",
-    }
-
-    tracks = []
-
     centerValue = []
     speedValue = []
     finalCoords = []
     trackToPredictSize = []
     direction = 0
+    
+    # as long as no final Coords value is found try again
+    while True:
+        trackForPrediction = random.choice(trackIsToPredict)
 
-    for trackIndex, trackId in trackIdList:
-        x = []
-        y = []
+        for trackIndex, trackId in trackIdList:
 
-        trackToPredict = trackIndex == trackForPrediction
+            trackToPredict = trackIndex == trackForPrediction
 
-        for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
-            if state.valid:
-                if stateIndex == 10 and trackToPredict:
-                    centerValue = [
-                        state.center_x,
-                        state.center_y,
-                    ]
-                    speedValue = [
-                        state.velocity_x,
-                        state.velocity_y,
-                    ]
-                    trackToPredictSize = [state.length, state.width]
-                    direction = state.heading * 180 / math.pi
-                if stateIndex == 90 and trackToPredict:
-                    finalCoords = [
-                        state.center_x,
-                        state.center_y,
-                    ]
+            for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
+                if state.valid:
+                        
+                    if stateIndex == 9 and trackToPredict:
+                        centerValue = [
+                            state.center_x,
+                            state.center_y,
+                        ]
+                        speedValue = [
+                            state.velocity_x,
+                            state.velocity_y,
+                        ]
+                        trackToPredictSize = [state.length, state.width]
+                        direction = state.heading * 180 / math.pi
+                    if stateIndex == 90 and trackToPredict:
+                        finalCoords = [
+                            state.center_x,
+                            state.center_y,
+                        ]
+                        return centerValue, speedValue, finalCoords, trackToPredictSize, direction 
+                    
 
-
-    return centerValue, speedValue, finalCoords, trackToPredictSize, direction
+    
 
 
 def getAllAgentsScatterPlot(

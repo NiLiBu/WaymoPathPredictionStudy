@@ -20,13 +20,6 @@ def getWaymoScenario(fileNumber: int, scenarioNumber: int) -> scenario_pb2.Scena
     Returns:
         waymo_open_dataset.protos.scenario_pb2.Scenario: The Scenario which was selected
     """
-
-    # FILE_NAME = "/home/studienarbeit/StudyWaymoPathPrediction/WaymoPathPredictionStudy/assets/motion_1_2_0.tfrecord-0%s-of-01000" % str(
-        
-    #     fileNumber
-    # ).rjust(
-    #     4, "0"
-    # )
     
     FILE_NAME = "assets/motion_1_2_0.tfrecord-0%s-of-01000" % str(
         fileNumber

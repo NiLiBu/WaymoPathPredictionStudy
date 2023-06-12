@@ -18,6 +18,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
     layout.updatemenus=[dict(
             type="buttons",
             direction = "left",
+            bgcolor = "red",
             buttons=list([
                 dict(
                     args=[
@@ -41,13 +42,14 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             showactive=True,
             x=0,
             xanchor="left",
-            y=1.05,
+            y=1.1,
             yanchor="top"
             )
         ]
     
     # FRAMES_TO_PLOT = 11
     FRAMES_TO_PLOT = 10
+    FRAMES_TO_PLOT = 89
     
     dictionarys = []
 
@@ -190,8 +192,8 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             ),
             # undefined Agent (grey)
             go.Scatter(
-                x=xUndefined[0],
-                y=yUndefined[0],
+                x=xUndefined[FRAMES_TO_PLOT - 1],
+                y=yUndefined[FRAMES_TO_PLOT - 1],
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
@@ -199,8 +201,8 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             ),
             # Vehicle Agent (black)
             go.Scatter(
-                x=xVehicle[0],
-                y=yVehicle[0],
+                x=xVehicle[FRAMES_TO_PLOT - 1],
+                y=yVehicle[FRAMES_TO_PLOT - 1],
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
@@ -208,8 +210,8 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             ),
             # Pedestrian Agent (green)
             go.Scatter(
-                x=xPedestrian[0],
-                y=yPedestrian[0],
+                x=xPedestrian[FRAMES_TO_PLOT - 1],
+                y=yPedestrian[FRAMES_TO_PLOT - 1],
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
@@ -217,8 +219,8 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             ),
             # Cyclist Agent (orange)
             go.Scatter(
-                x=xCyclist[0],
-                y=yCyclist[0],
+                x=xCyclist[FRAMES_TO_PLOT - 1],
+                y=yCyclist[FRAMES_TO_PLOT - 1],
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",

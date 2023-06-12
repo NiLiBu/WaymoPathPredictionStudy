@@ -37,3 +37,34 @@ def getPredictionFigure(
         data=[plot],
         layout=layout,
     )
+
+
+def getPredictionDot(
+    x: float,
+    y: float,
+    mapCenter_x: float,
+    mapCenter_y: float,
+):
+    layout = sharedFunctionsPlotly.getPlotLayout(
+        centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y
+    )
+    plot = go.Scattergl(
+        x=[x],
+        y=[y],
+        hoverinfo="skip",
+        mode="markers",
+        marker= {
+            "color": "white",
+            "line": {
+                "color": "red",
+                "width": 2,
+            },
+            "size": 15,
+            "symbol": "octagon", 
+        }
+    )
+
+    return go.Figure(
+        data=[plot],
+        layout=layout,
+    )
