@@ -23,7 +23,7 @@ server = app.server
 
 def initApp():
     
-    scenarioID = random.randint(1, 10)
+    scenarioID = random.randint(1, 1000)
     
     data = waymoOpenDataset.getWaymoScenario(0, scenarioID)
     global trackCenter
