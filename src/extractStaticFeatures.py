@@ -268,9 +268,6 @@ def getStopSignScatterPlot(
                 source=Image.open(
                     "assets/stopSign.png"
                 ),
-                # source=Image.open(
-                #     "/home/studienarbeit/StudyWaymoPathPrediction/WaymoPathPredictionStudy/assets/stopSign.png"
-                # ),
                 xref="x",
                 yref="y",
                 x=x[index],

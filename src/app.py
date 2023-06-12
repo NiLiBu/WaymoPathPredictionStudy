@@ -9,6 +9,7 @@ import src.waymoOpenDataset as waymoOpenDataset
 import src.extractStaticFeatures as extractStaticFeatures
 import src.extractAgentFeatures as extractAgentFeatures
 import src.prediction as prediction
+import src.extractDynamicMapFeatures as extractDynamicMapFeatures
  
 
 app = Dash(__name__, title="WaymoPathPredictionStudy")
@@ -17,7 +18,7 @@ app = Dash(__name__, title="WaymoPathPredictionStudy")
 server = app.server
 
 
-data = waymoOpenDataset.getWaymoScenario(0, 1)
+data = waymoOpenDataset.getWaymoScenario(0, 5)
 trackCenter, trackSize, trackDirection, tracks = extractAgentFeatures.getRandomAgent(
     scenario=data
 )
@@ -42,7 +43,7 @@ figurePredict = prediction.getPredictionFigure(
     mapCenter_y=trackCenter[1],
 )
 
-figureAgents = extractAgentFeatures.getAllAgentsScatterPlot(
+figureAgentsAndLaneStates = extractDynamicMapFeatures.getDynamicLaneStates(
     trackCenter[0], trackCenter[1], data
 )
 
@@ -56,29 +57,26 @@ app.layout = html.Div(
             """
                      # Plotly Path Prediction
                      Auswählen der Endposition über Drag & Drop 
-                     Auswählen der Drehung über den Slider (Die Drehung ist nicht relevant für die Auswertung)
+                     
+                     Auswählen der Drehung ist nicht relevant für die Auswertung
+                     
+                     Über erneutes Klicken des Abspielen knopfs kann der Datensatz erneut angesehen werden.
                      
                      
                      ### Legende
-                        🔴 Stop Schilder
-                        
-                        🟧 Bodenschwellen
-                        
-                        🟨 Fußgängerüberwege
-                        
-                        🟩 Ein-/ Ausfahrten
-                        
-                        🞉 Straßenamarkierungen
-                        
-                        🞅 Fahrstreifenmarkierung
+                     
+                     Statische Legende | Dynamische Legende 
+                     ----------------- | -------------------
+                     🔴 Stop Schilder | ⬛ Kraftfahrzeug
+                     🟧 Bodenschwellen | 🟧 Radfahrer
+                     🟦 Fußgängerüberwege | 🟩 Fußgänger
+                     🟩 Ein-/ Ausfahrten | 🔲 Nicht definierter Verkehrsteilnehmer
+                     🞉 Straßenamarkierungen | ⭕ Endposition des Fahrzeugs, welches vorhergesagt werden soll
+                     🞅 Fahrstreifenmarkierung |
                         
                      """
         ),
-        dcc.Graph(
-            id="Predict",
-            style={"display": "block", "position": "absolute", "width": "100%"},
-            figure=figurePredict,
-        ),
+        
         dcc.Graph(
             id="Street",
             style={"display": "block", "position": "absolute", "width": "100%"},
@@ -95,12 +93,18 @@ app.layout = html.Div(
             figure=figureStopSign,
         ),
         dcc.Graph(
-            id="Agents",
+            id="Predict",
             style={"display": "block", "position": "absolute", "width": "100%"},
-            figure=figureAgents,
+            figure=figurePredict,
+        ),
+        dcc.Graph(
+            id="Lanes",
+            style={"display": "block", "position": "absolute", "width": "100%"},
+            figure=figureAgentsAndLaneStates,
         ),
     ]
 )
 
 if __name__ == "__main__":
     app.run_server(debug=True, port=8052)
+

@@ -23,9 +23,12 @@ def getPredictionFigure(
         x=x,
         y=y,
         hoverinfo="skip",
-        mode="none",
-        fill="toself",
+        mode="lines",
+        fill="none",
         fillcolor='rgba(0,0,0, 1)',
+        line= {
+            "color": "red",
+        }
     )
 
     return go.Figure(

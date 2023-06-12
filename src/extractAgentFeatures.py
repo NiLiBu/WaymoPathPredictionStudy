@@ -6,6 +6,14 @@ import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 
 
 def getRandomAgent(scenario: scenario_pb2.Scenario):
+    """UNUSED FUNCTION IS NO LONGER MAINTAINED
+
+    Args:
+        scenario (scenario_pb2.Scenario): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # Find Track that should be predicted
     trackIsToPredict = []
 
@@ -43,7 +51,7 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
         trackToPredict = trackIndex == trackForPrediction
 
         for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
-            if state.valid and stateIndex <= 10:
+            if state.valid and stateIndex < 10:
                 length = state.length
                 width = state.width
 
@@ -113,22 +121,6 @@ def getAllAgentsScatterPlot(
             xanchor="left",
             y=1.1,
             yanchor="top"
-            
-            # buttons=[dict(label="Play",
-            #               method="animate",
-            #               args=[None, {
-            #                   "frame": {
-            #                       "duration": 100, 
-            #                       "redraw": False
-            #                   },
-            #                   "fromcurrent": True, 
-            #                   "transition": {
-            #                       "duration": 0
-            #                   }
-            #                 }
-            #               ]
-            #             )
-            #         ]
             )
         ]
 
