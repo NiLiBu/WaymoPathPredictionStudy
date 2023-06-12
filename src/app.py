@@ -11,6 +11,7 @@ import src.extractStaticFeatures as extractStaticFeatures
 import src.extractAgentFeatures as extractAgentFeatures
 import src.prediction as prediction
 import src.extractDynamicMapFeatures as extractDynamicMapFeatures
+import src.metrics as metrics
  
 
 app = Dash(__name__, title="WaymoPathPredictionStudy")
@@ -21,10 +22,15 @@ server = app.server
 
 def initApp():
     
-    scenarioID = random.randint(1, 1000)
+    scenarioID = random.randint(1, 10)
     
     data = waymoOpenDataset.getWaymoScenario(0, scenarioID)
-    trackCenter, trackSize, trackDirection, tracks = extractAgentFeatures.getRandomAgent(
+    global trackCenter
+    global trackSpeed
+    global finalCoords
+    global trackSize
+    global trackDirection
+    trackCenter, trackSpeed, finalCoords, trackSize, trackDirection = extractAgentFeatures.getRandomAgent(
         scenario=data
     )
 
@@ -59,9 +65,10 @@ def initApp():
         trackCenter[0], trackCenter[1], data
     )
 
-
-    # predictionCoordinate_x = trackCenter[0]
-    # predictionCoordinate_y = trackCenter[1]
+    global predictionCoordinate_x
+    predictionCoordinate_x = trackCenter[0]
+    global predictionCoordinate_y
+    predictionCoordinate_y = trackCenter[1]
 
 initApp()
 
@@ -79,18 +86,29 @@ app.layout = html.Div(
                      
                      ### Legende
                      
-                     Statische Legende | Dynamische Legende 
-                     ----------------- | -------------------
-                     🔴 Stop Schilder | ⬛ Kraftfahrzeug
-                     🟧 Bodenschwellen | 🟧 Radfahrer
-                     🟦 Fußgängerüberwege | 🟩 Fußgänger
-                     🟩 Ein-/ Ausfahrten | 🔲 Nicht definierter Verkehrsteilnehmer
+                     Statische Farben | Fahrzeug Farben   | Fahrspurmarkierungen 
+                     ----------------- | ---------------- | --------------------
+                     🔴 Stop Schilder | ⬛ Kraftfahrzeug | 🞅 Kein Status
+                     🟧 Bodenschwellen | 🟧 Radfahrer    | 🟥 Status STOPP
+                     🟦 Fußgängerüberwege | 🟩 Fußgänger | 🟨 Status ACHTUNG
+                     🟩 Ein-/ Ausfahrten | 🔲 Nicht definierter Verkehrsteilnehmer | 🟩 Status FAHREN
                      🞉 Straßenamarkierungen | ⭕ Endposition des Fahrzeugs, welches vorhergesagt werden soll
-                     🞅 Fahrstreifenmarkierung |
                         
                      """
         ),
-        html.Button("Neues Scenario", id="newScenario", n_clicks=0),
+        html.Button("Vorhersage abgeben", 
+                    id="newScenario", 
+                    style={
+                        "margin-top": "2rem",
+                        "margin-left": "80px",
+                        "cursor": "pointer",
+                        "border-radius": "2px",
+                        "border": "2px solid red",
+                        "background": "#f4faff",
+                        "padding": "6px",
+                        "color": "#393939",
+                    },
+                    n_clicks=0),
         
         dcc.Graph(
             id="Street",
@@ -108,14 +126,14 @@ app.layout = html.Div(
             figure=figureStopSign,
         ),
         dcc.Graph(
-            id="Predict",
-            style={"display": "block", "position": "absolute", "width": "100%"},
-            figure=figurePredict,
-        ),
-        dcc.Graph(
             id="Lanes",
             style={"display": "block", "position": "absolute", "width": "100%"},
             figure=figureAgentsAndLaneStates,
+        ),
+        dcc.Graph(
+            id="Predict",
+            style={"display": "block", "position": "absolute", "width": "100%"},
+            figure=figurePredict,
         ),
     ]
 )
@@ -129,8 +147,17 @@ app.layout = html.Div(
     Output("Lanes", "figure"),
     [Input("newScenario", "n_clicks")],
 )
-def updateScenarioSelected(n_clicks):
-    print("reload")
+def guessScenarioSelected(n_clicks):
+    
+    print(metrics.calculateMissBoolean8s(
+            predictionCoordinate_x, 
+            predictionCoordinate_y, 
+            trackSpeed[0], 
+            trackSpeed[1], 
+            finalCoords[0], 
+            finalCoords[1]
+        )
+    )
     initApp()
     return figureStreet, figurePolygons, figureStopSign, figurePredict, figureAgentsAndLaneStates
 

@@ -59,7 +59,7 @@ def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
         template="simple_white",
         showlegend=False,
         dragmode="drawline",
-        newshape=dict({"line": {"color": "rgba(0, 0, 0, 0.5)"}}),
+        # newshape={"line": {"color": "cyan"}},
         xaxis_range=[
             int(centerCoord_x - RANGE_DELTA),
             int(centerCoord_x + RANGE_DELTA),

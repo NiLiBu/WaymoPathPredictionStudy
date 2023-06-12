@@ -14,6 +14,8 @@ def getPredictionFigure(
     layout = sharedFunctionsPlotly.getDragAndDropLayout(
         centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y
     )
+    
+  
 
     x, y = sharedFunctionsPlotly.getPolygonCoordsFromCenterCoords(
         center_x=x, center_y=y, degrees=rotation, width=width, length=lenght

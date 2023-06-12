@@ -6,7 +6,9 @@ import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 
 
 def getRandomAgent(scenario: scenario_pb2.Scenario):
-    """UNUSED FUNCTION IS NO LONGER MAINTAINED
+    """
+    
+    UNUSED FUNCTION IS NO LONGER MAINTAINED
 
     Args:
         scenario (scenario_pb2.Scenario): _description_
@@ -38,6 +40,8 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
     tracks = []
 
     centerValue = []
+    speedValue = []
+    finalCoords = []
     trackToPredictSize = []
     direction = 0
 
@@ -45,45 +49,29 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
         x = []
         y = []
 
-        length = 0
-        width = 0
-
         trackToPredict = trackIndex == trackForPrediction
 
         for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
-            if state.valid and stateIndex < 10:
-                length = state.length
-                width = state.width
-
-                x.append(state.center_x)
-                y.append(state.center_y)
-
-                if trackToPredict:
+            if state.valid:
+                if stateIndex == 10 and trackToPredict:
                     centerValue = [
                         state.center_x,
                         state.center_y,
                     ]
-
+                    speedValue = [
+                        state.velocity_x,
+                        state.velocity_y,
+                    ]
                     trackToPredictSize = [state.length, state.width]
-
                     direction = state.heading * 180 / math.pi
+                if stateIndex == 90 and trackToPredict:
+                    finalCoords = [
+                        state.center_x,
+                        state.center_y,
+                    ]
 
-        if x.__len__() > 0:
-            tracks.append(
-                {
-                    "type": trackType.get(
-                        scenario.tracks[trackIndex].object_type, "Undefined"
-                    ),
-                    "x": x,
-                    "y": y,
-                    "direction": state.heading * 180 / math.pi,
-                    "length": length,
-                    "width": width,
-                    "toPredict": trackToPredict,
-                }
-            )
 
-    return centerValue, trackToPredictSize, direction, tracks
+    return centerValue, speedValue, finalCoords, trackToPredictSize, direction
 
 
 def getAllAgentsScatterPlot(

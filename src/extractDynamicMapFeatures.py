@@ -37,11 +37,11 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                     method="animate"
                 ),
             ]),
-            pad={"r": 10, "t": 10},
+            pad={"r": 0, "t": 0},
             showactive=True,
-            x=0.11,
+            x=0,
             xanchor="left",
-            y=1.1,
+            y=1.05,
             yanchor="top"
             )
         ]
