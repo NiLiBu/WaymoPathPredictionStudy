@@ -13,6 +13,7 @@ import src.extractAgentFeatures as extractAgentFeatures
 import src.prediction as prediction
 import src.extractDynamicMapFeatures as extractDynamicMapFeatures
 import src.metrics as metrics
+import src.sharedFunctionsPlotly as sharedFunctionsPlotly
  
 
 app = Dash(__name__, title="WaymoPathPredictionStudy")
@@ -21,13 +22,12 @@ app = Dash(__name__, title="WaymoPathPredictionStudy")
 server = app.server
 
 
-def initApp():
-    
+def getRandomScenario():
     global scenarioID
     global fileNumber
     scenarioID = random.randint(1, 1000)
     fileNumber = random.randint(0,0)
-    
+    global data
     data = waymoOpenDataset.getWaymoScenario(fileNumber, scenarioID)
     global trackCenter
     global trackSpeed
@@ -39,6 +39,15 @@ def initApp():
         scenario=data
     )
 
+def initScenario():
+    
+    global data
+    global trackCenter
+    global trackSpeed
+    global finalCoords
+    global trackSize
+    global trackDirection
+    global trackID
     global figureStreet
     figureStreet = extractStaticFeatures.getRoadFeaturesScatterPlot(
         trackCenter[0], trackCenter[1], data
@@ -83,20 +92,23 @@ def initApp():
     global predictionCoordinate_y
     predictionCoordinate_y = trackCenter[1]
 
-initApp()
+getRandomScenario()
+initScenario()
 
 app.layout = html.Div(
     children=[
         dcc.Markdown(
             """
                      # Plotly Path Prediction
-                     Auswählen der Endposition über Drag & Drop 
+                     Auswählen der Endposition über Drag & Drop.
                      
-                     Auswählen der Drehung ist nicht relevant für die Auswertung
+                     Auswählen der Drehung ist nicht relevant für die Auswertung.
                      
                      Über erneutes Klicken des Abspielen knopfs kann der Datensatz erneut angesehen werden.
                      
-                     Für eine korrekte Funktionsweise 100% Skallierung beibehalten
+                     Für eine korrekte Funktionsweise 100% Skallierung beibehalten.
+                     
+                     Es soll der Standort nach 8 Sekunden angegeben werden.
                      
                      ### Legende
                      
@@ -186,7 +198,9 @@ app.layout = html.Div(
     ]
 )
 
-clicks = 0
+newScenarioClicks = 0
+zoomInClicks = 0
+zoomOutClicks = 0
 
 @app.callback(
     Output("Street", "figure"),
@@ -195,51 +209,69 @@ clicks = 0
     Output("Predict", "figure"),
     Output("PredictionDot", "figure"),
     Output("Lanes", "figure"),
-    [Input("newScenario", "n_clicks"), Input("Predict", "relayoutData")],
+    [
+        Input("newScenario", "n_clicks"), 
+        Input("zoomIn", "n_clicks"),
+        Input("zoomOut", "n_clicks"),
+        Input("Predict", "relayoutData"),
+    ],
 )
-def guessScenarioSelected(n_clicks, graphData):
+def guessScenarioSelected(newScenarioClickNo, zoomInClickNo, zoomOutClickNo, graphData):
     
-    global clicks
-    global predictionCoordinate_x
-    global predictionCoordinate_y
+    
     global figurePrediction
     
-    if clicks != n_clicks:
-        clicks = n_clicks
-        displacement = (metrics.calculateDisplacementError(
-                predictionCoordinate_x, 
-                predictionCoordinate_y, 
-                trackSpeed[0], 
-                trackSpeed[1], 
-                finalCoords[0], 
-                finalCoords[1]
-        ))
-        missRate = (metrics.calculateMissBoolean8s(
-                predictionCoordinate_x, 
-                predictionCoordinate_y, 
-                trackSpeed[0], 
-                trackSpeed[1], 
-                finalCoords[0], 
-                finalCoords[1]
-            )
-        )
-        
-        with open("src/results.csv", "a") as file:
-            file.write("%s, %s, %s, %s, %s, %s \n" % (str(fileNumber), str(scenarioID), str(trackID), str(missRate), str(displacement[0]), str(displacement[1])))
-        
-        initApp()
-        return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
+    global newScenarioClicks
+    global zoomInClicks
+    global zoomOutClicks
     
-    if graphData is not None:
-        data = graphData["shapes"][-1]
-        dx = data["x1"] - data["x0"]
-        dy = data["y1"] - data["y0"]
-        
-        
-        predictionCoordinate_x += dx
-        predictionCoordinate_y += dy
-        
-        figurePrediction = prediction.getPredictionFigure(
+    # check if newScenario was clicked?
+    if newScenarioClicks != newScenarioClickNo:
+        newScenarioClicks = newScenarioClickNo
+        return predictionFinished()
+    # check if zoomIn was clicked?
+    elif zoomInClicks != zoomInClickNo:
+        zoomInClicks = zoomInClickNo
+        return zoomIn()
+    # check if zoomOut was clicked?
+    elif zoomOutClicks != zoomOutClickNo:
+        zoomOutClicks = zoomOutClickNo
+        return zoomOut()
+    # check if drag and drop was used
+    elif graphData is not None:
+        return dragAndDrop(graphData)
+    else:
+        return dash.no_update
+
+def dragAndDrop(graphData):
+    data = graphData["shapes"][-1]
+    dx = data["x1"] - data["x0"]
+    dy = data["y1"] - data["y0"]
+    
+    global predictionCoordinate_x
+    global predictionCoordinate_y
+    
+    predictionCoordinate_x += dx
+    predictionCoordinate_y += dy
+    
+    figurePrediction = prediction.getPredictionFigure(
+        xPredict=predictionCoordinate_x,
+        yPredict=predictionCoordinate_y,
+        xStart=trackCenter[0],
+        yStart=trackCenter[1],
+        rotation=trackDirection,
+        width=trackSize[0],
+        lenght=trackSize[1],
+        mapCenter_x=trackCenter[0],
+        mapCenter_y=trackCenter[1],
+    )
+    return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
+
+
+def zoomOut():
+    sharedFunctionsPlotly.zoomOut()
+    initScenario()
+    figurePrediction = prediction.getPredictionFigure(
             xPredict=predictionCoordinate_x,
             yPredict=predictionCoordinate_y,
             xStart=trackCenter[0],
@@ -250,12 +282,51 @@ def guessScenarioSelected(n_clicks, graphData):
             mapCenter_x=trackCenter[0],
             mapCenter_y=trackCenter[1],
         )
+    return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
+
+def zoomIn():
+    sharedFunctionsPlotly.zoomIn()
+    initScenario()
+    figurePrediction = prediction.getPredictionFigure(
+            xPredict=predictionCoordinate_x,
+            yPredict=predictionCoordinate_y,
+            xStart=trackCenter[0],
+            yStart=trackCenter[1],
+            rotation=trackDirection,
+            width=trackSize[0],
+            lenght=trackSize[1],
+            mapCenter_x=trackCenter[0],
+            mapCenter_y=trackCenter[1],
+        )
+    return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
+
+
+
+def predictionFinished():
+    displacement = (metrics.calculateDisplacementError(
+            predictionCoordinate_x, 
+            predictionCoordinate_y, 
+            trackSpeed[0], 
+            trackSpeed[1], 
+            finalCoords[0], 
+            finalCoords[1]
+    ))
+    missRate = (metrics.calculateMissBoolean8s(
+            predictionCoordinate_x, 
+            predictionCoordinate_y, 
+            trackSpeed[0], 
+            trackSpeed[1], 
+            finalCoords[0], 
+            finalCoords[1]
+        )
+    )
     
-        graphData = None
-        return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
-    else:
-        return dash.no_update
+    with open("src/results.csv", "a") as file:
+        file.write("%s, %s, %s, %s, %s, %s \n" % (str(fileNumber), str(scenarioID), str(trackID), str(missRate), str(displacement[0]), str(displacement[1])))
     
+    getRandomScenario()
+    initScenario()
+    return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
 
 if __name__ == "__main__":
     app.run_server(debug=True, port=8052)

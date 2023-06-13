@@ -4,6 +4,15 @@ import math
 GRAPH_SIZE = 1000
 RANGE_DELTA = 100
 
+def zoomOut():
+    global RANGE_DELTA
+    RANGE_DELTA = RANGE_DELTA * 1.4
+    
+    
+def zoomIn():
+    global RANGE_DELTA
+    RANGE_DELTA = RANGE_DELTA * 0.6
+
 
 def getPlotLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
     """
@@ -65,8 +74,8 @@ def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
             (centerCoord_x + RANGE_DELTA),
         ],
         yaxis_range=[
-            (centerCoord_y - RANGE_DELTA - 19),
-            (centerCoord_y + RANGE_DELTA - 19),
+            (centerCoord_y - RANGE_DELTA - 19 * 100/RANGE_DELTA),
+            (centerCoord_y + RANGE_DELTA - 19 * 100/RANGE_DELTA),
         ],
     )
 

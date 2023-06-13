@@ -47,9 +47,8 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
             )
         ]
     
-    # FRAMES_TO_PLOT = 11
-    FRAMES_TO_PLOT = 10
-    # FRAMES_TO_PLOT = 89
+    # FRAMES_TO_PLOT = 10
+    FRAMES_TO_PLOT = 89
     
     dictionarys = []
 
