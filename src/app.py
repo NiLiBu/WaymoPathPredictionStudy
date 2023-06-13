@@ -23,15 +23,19 @@ server = app.server
 
 def initApp():
     
+    global scenarioID
+    global fileNumber
     scenarioID = random.randint(1, 1000)
+    fileNumber = random.randint(0,0)
     
-    data = waymoOpenDataset.getWaymoScenario(0, scenarioID)
+    data = waymoOpenDataset.getWaymoScenario(fileNumber, scenarioID)
     global trackCenter
     global trackSpeed
     global finalCoords
     global trackSize
     global trackDirection
-    trackCenter, trackSpeed, finalCoords, trackSize, trackDirection = extractAgentFeatures.getRandomAgent(
+    global trackID
+    trackCenter, trackSpeed, finalCoords, trackSize, trackDirection, trackID = extractAgentFeatures.getRandomAgent(
         scenario=data
     )
 
@@ -202,7 +206,7 @@ def guessScenarioSelected(n_clicks, graphData):
     
     if clicks != n_clicks:
         clicks = n_clicks
-        print(metrics.calculateDisplacementError(
+        displacement = (metrics.calculateDisplacementError(
                 predictionCoordinate_x, 
                 predictionCoordinate_y, 
                 trackSpeed[0], 
@@ -210,7 +214,7 @@ def guessScenarioSelected(n_clicks, graphData):
                 finalCoords[0], 
                 finalCoords[1]
         ))
-        print(metrics.calculateMissBoolean8s(
+        missRate = (metrics.calculateMissBoolean8s(
                 predictionCoordinate_x, 
                 predictionCoordinate_y, 
                 trackSpeed[0], 
@@ -219,6 +223,10 @@ def guessScenarioSelected(n_clicks, graphData):
                 finalCoords[1]
             )
         )
+        
+        with open("src/results.csv", "a") as file:
+            file.write("%s, %s, %s, %s, %s, %s \n" % (str(fileNumber), str(scenarioID), str(trackID), str(missRate), str(displacement[0]), str(displacement[1])))
+        
         initApp()
         return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
     

@@ -62,7 +62,7 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
                             state.center_x,
                             state.center_y,
                         ]
-                        return centerValue, speedValue, finalCoords, trackToPredictSize, direction 
+                        return centerValue, speedValue, finalCoords, trackToPredictSize, direction, trackForPrediction 
                     
 
     
