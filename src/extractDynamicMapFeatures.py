@@ -49,7 +49,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
     
     # FRAMES_TO_PLOT = 11
     FRAMES_TO_PLOT = 10
-    FRAMES_TO_PLOT = 89
+    # FRAMES_TO_PLOT = 89
     
     dictionarys = []
 
@@ -180,12 +180,12 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
     ###################################################################################################
     plot = [
             go.Scatter(
-                x=xLines[0],
-                y=yLines[0],
+                x=xLines[FRAMES_TO_PLOT - 1],
+                y=yLines[FRAMES_TO_PLOT - 1],
                 hoverinfo="skip",
                 mode="markers",
                 marker={
-                    "size": dotSize[0],
+                    "size": dotSize[FRAMES_TO_PLOT - 1],
                     "opacity": 1,
                     "line": {"width": 1, "color":colorLines[0]},
                 },
@@ -197,7 +197,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(50,50,50, 1)',
+                fillcolor='rgba(50,50,50, 0.7)',
             ),
             # Vehicle Agent (black)
             go.Scatter(
@@ -206,7 +206,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(0,0,0, 1)',
+                fillcolor='rgba(0,0,0, 0.7)',
             ),
             # Pedestrian Agent (green)
             go.Scatter(
@@ -215,7 +215,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(0, 150,0, 1)',
+                fillcolor='rgba(0, 150,0, 0.7)',
             ),
             # Cyclist Agent (orange)
             go.Scatter(
@@ -224,7 +224,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(255,255,255, 1)',
+                fillcolor='rgba(255,255,255, 0.7)',
             )
         ]
     
@@ -248,7 +248,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(50,50,50, 1)',
+                fillcolor='rgba(50,50,50, 0.7)',
             ),
             # Vehicle Agent (Black)
             go.Scatter(
@@ -257,7 +257,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(0,0,0, 1)',
+                fillcolor='rgba(0,0,0, 0.7)',
             ),
             # Pedestrian Agent (green)
             go.Scatter(
@@ -266,7 +266,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(0,150,0, 1)',
+                fillcolor='rgba(0,150,0, 0.7)',
             ),
             # Cyclist Agent (orange)
             go.Scatter(
@@ -275,7 +275,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
                 hoverinfo="skip",
                 mode="none",
                 fill="toself",
-                fillcolor='rgba(200,100,0, 1)',
+                fillcolor='rgba(200,100,0, 0.7)',
             )]))
         
     

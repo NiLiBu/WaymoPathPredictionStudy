@@ -50,21 +50,21 @@ def initApp():
         trackCenter[0], trackCenter[1], data
     )
 
-    global figurePredict
-    figurePredict = prediction.getPredictionFigure(
-        x=trackCenter[0],
-        y=trackCenter[1],
-        rotation=trackDirection,
-        width=trackSize[0],
-        lenght=trackSize[1],
+    global figureDragAndDrop
+    figureDragAndDrop = prediction.getDragAndDropFigure(
         mapCenter_x=trackCenter[0],
         mapCenter_y=trackCenter[1],
     )
     
-    global figurePredictionDot
-    figurePredictionDot =  prediction.getPredictionDot(
-        x=trackCenter[0],
-        y=trackCenter[1],
+    global figurePrediction
+    figurePrediction =  prediction.getPredictionFigure(
+        xPredict=trackCenter[0],
+        yPredict=trackCenter[1],
+        xStart=trackCenter[0],
+        yStart=trackCenter[1],
+        rotation=trackDirection,
+        width=trackSize[0],
+        lenght=trackSize[1],
         mapCenter_x=trackCenter[0],
         mapCenter_y=trackCenter[1],
     )
@@ -119,6 +119,32 @@ app.layout = html.Div(
                         "color": "#393939",
                     },
                     n_clicks=0),
+        html.Button("➖ Zoom Out", 
+                    id="zoomOut", 
+                    style={
+                        "margin-top": "2rem",
+                        "margin-left": "10px",
+                        "cursor": "pointer",
+                        "border-radius": "2px",
+                        "border": "2px solid #bec8d9",
+                        "background": "#f4faff",
+                        "padding": "6px",
+                        "color": "#393939",
+                    },
+                    n_clicks=0),
+        html.Button("➕ Zoom In", 
+                    id="zoomIn", 
+                    style={
+                        "margin-top": "2rem",
+                        "margin-left": "10px",
+                        "cursor": "pointer",
+                        "border-radius": "2px",
+                        "border": "2px solid #bec8d9",
+                        "background": "#f4faff",
+                        "padding": "6px",
+                        "color": "#393939",
+                    },
+                    n_clicks=0),
         
         dcc.Graph(
             id="Street",
@@ -138,17 +164,20 @@ app.layout = html.Div(
         dcc.Graph(
             id="PredictionDot",
             style={"display": "block", "position": "absolute", "width": "100%"},
-            figure=figurePredictionDot,
+            figure=figurePrediction,
         ),
+        # Must be second lowset to allow Button "Abspielen der Verkehrssituation" to be pressed
         dcc.Graph(
             id="Lanes",
             style={"display": "block", "position": "absolute", "width": "100%"},
             figure=figureAgentsAndLaneStates,
         ),
+        # Predict has to be lowest for drag an drop functionallyty
+        # Therefore it has spacing at the top that buttons underneath can be accessed
         dcc.Graph(
             id="Predict",
             style={"display": "block", "position": "absolute", "width": "100%", "top": "550px"},
-            figure=figurePredict,
+            figure=figureDragAndDrop,
         ),
     ]
 )
@@ -169,10 +198,18 @@ def guessScenarioSelected(n_clicks, graphData):
     global clicks
     global predictionCoordinate_x
     global predictionCoordinate_y
-    global figurePredictionDot
+    global figurePrediction
     
     if clicks != n_clicks:
         clicks = n_clicks
+        print(metrics.calculateDisplacementError(
+                predictionCoordinate_x, 
+                predictionCoordinate_y, 
+                trackSpeed[0], 
+                trackSpeed[1], 
+                finalCoords[0], 
+                finalCoords[1]
+        ))
         print(metrics.calculateMissBoolean8s(
                 predictionCoordinate_x, 
                 predictionCoordinate_y, 
@@ -183,7 +220,7 @@ def guessScenarioSelected(n_clicks, graphData):
             )
         )
         initApp()
-        return figureStreet, figurePolygons, figureStopSign, figurePredict, figurePredictionDot, figureAgentsAndLaneStates
+        return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
     
     if graphData is not None:
         data = graphData["shapes"][-1]
@@ -194,27 +231,23 @@ def guessScenarioSelected(n_clicks, graphData):
         predictionCoordinate_x += dx
         predictionCoordinate_y += dy
         
-        figurePredictionDot = prediction.getPredictionDot(
-        x=predictionCoordinate_x,
-        y=predictionCoordinate_y,
-        mapCenter_x=trackCenter[0],
-        mapCenter_y=trackCenter[1],
+        figurePrediction = prediction.getPredictionFigure(
+            xPredict=predictionCoordinate_x,
+            yPredict=predictionCoordinate_y,
+            xStart=trackCenter[0],
+            yStart=trackCenter[1],
+            rotation=trackDirection,
+            width=trackSize[0],
+            lenght=trackSize[1],
+            mapCenter_x=trackCenter[0],
+            mapCenter_y=trackCenter[1],
         )
-        
+    
         graphData = None
-        return figureStreet, figurePolygons, figureStopSign, figurePredict, figurePredictionDot, figureAgentsAndLaneStates
+        return figureStreet, figurePolygons, figureStopSign, figureDragAndDrop, figurePrediction, figureAgentsAndLaneStates
     else:
         return dash.no_update
     
-        
-
-
-def dragAndDrop(graphData):
-    if graphData is None:
-        return dash.no_update
-    print(graphData)
-    
-    return figurePredict
 
 if __name__ == "__main__":
     app.run_server(debug=True, port=8052)

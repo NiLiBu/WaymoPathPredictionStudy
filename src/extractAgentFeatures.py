@@ -115,7 +115,7 @@ def getAllAgentsScatterPlot(
     # }
     
     
-    FRAMES_TO_PLOT = 90
+    FRAMES_TO_PLOT = 10
     
     x = []
     y = []
