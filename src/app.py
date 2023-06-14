@@ -410,7 +410,6 @@ def zoomIn(
 )
 def predictionFinished(
     n_clicks,
-    ScenarioDatei,
     TrackData,
     ZoomLevel,
     PredictionX,
@@ -421,11 +420,9 @@ def predictionFinished(
     if (
         n_clicks is None
         or ZoomLevel is None
-        or ScenarioDatei is None
         or ScenarioID is None
         or TrackData is None
         or FileNumber is None
-        or ScenarioID is None
     ):
         raise PreventUpdate
     else:
@@ -460,7 +457,7 @@ def predictionFinished(
                 "%s, %s, %s, %s, %s, %s \n"
                 % (
                     str(FileNumber),
-                    str(PreventUpdate),
+                    str(ScenarioID),
                     str(trackID),
                     str(missRate),
                     str(displacement[0]),
