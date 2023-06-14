@@ -47,8 +47,8 @@ def getDynamicLaneStates(
         )
     ]
 
-    # FRAMES_TO_PLOT = 10
-    FRAMES_TO_PLOT = 89
+    FRAMES_TO_PLOT = 10
+    # FRAMES_TO_PLOT = 89
 
     dictionarys = []
 

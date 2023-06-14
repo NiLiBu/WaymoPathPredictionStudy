@@ -468,7 +468,8 @@ def predictionFinished(
                 )
             )
 
-        trackData, scenarioID, fileNumber = init.getRandomScenario()
+        trackData, ScenarioID, fileNumber = init.getRandomScenario()
+        ScenarioData = waymoOpenDataset.getWaymoScenario(FileNumber, ScenarioID)
         (
             trackCenter,
             trackSpeed,
@@ -485,7 +486,7 @@ def predictionFinished(
             figurePrediction,
             figureAgentsAndLaneStates,
         ) = init.initScenario(
-            scenarioData, trackID, 100, trackCenter[0], trackCenter[1]
+            ScenarioData, trackID, 100, trackCenter[0], trackCenter[1]
         )
 
         return (
@@ -500,7 +501,7 @@ def predictionFinished(
             trackCenter[0],
             trackCenter[1],
             fileNumber,
-            scenarioID,
+            ScenarioID,
         )
 
 
