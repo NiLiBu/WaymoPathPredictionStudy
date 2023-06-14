@@ -3,9 +3,8 @@ import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 from PIL import Image
 
-
 def extractRoadFeatures(
-    scenario: scenario_pb2.Scenario,
+    scenario: scenario_pb2.Scenario
 ) -> list[list[int]]:
     """
     Extract road lines, road lanes and road edges from the dataset
@@ -38,11 +37,11 @@ def extractRoadFeatures(
 
     return [x, y, size]
 
-
 def getRoadFeaturesScatterPlot(
     centerCoord_x: int,
     centerCoord_y: int,
     scenario: scenario_pb2.Scenario,
+    zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -55,7 +54,7 @@ def getRoadFeaturesScatterPlot(
         go.Figure: A scatter plot which shows the roadFeatures
     """
     layout = sharedFunctionsPlotly.getPlotLayout(
-        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y
+        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y, zoomLevel=zoomLevel
     )
     x, y, dotSize = extractRoadFeatures(scenario=scenario)
 
@@ -76,7 +75,6 @@ def getRoadFeaturesScatterPlot(
         data=[plot],
         layout=layout,
     )
-
 
 def extractStaticPolynomials(
     scenario: scenario_pb2.Scenario,
@@ -121,11 +119,11 @@ def extractStaticPolynomials(
 
     return x_speed_bump, y_speed_bump, x_crosswalk, y_crosswalk, x_driveway, y_driveway
 
-
 def getPolygonFeaturesScatterPlot(
     centerCoord_x: int,
     centerCoord_y: int,
     scenario: scenario_pb2.Scenario,
+    zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -138,7 +136,7 @@ def getPolygonFeaturesScatterPlot(
         go.Figure: A scatter plot which shows the roadFeatures
     """
     layout = sharedFunctionsPlotly.getPlotLayout(
-        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y
+        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y, zoomLevel=zoomLevel
     )
     (
         x_speed_bump,
@@ -196,9 +194,8 @@ def getPolygonFeaturesScatterPlot(
         layout=layout,
     )
 
-
 def extractStopSigns(
-    scenario: scenario_pb2.Scenario,
+    scenario: scenario_pb2.Scenario
 ) -> list[list[int]]:
     """
     Gets all points of stop signs
@@ -222,11 +219,11 @@ def extractStopSigns(
 
     return x, y
 
-
 def getStopSignScatterPlot(
     centerCoord_x: int,
     centerCoord_y: int,
     scenario: scenario_pb2.Scenario,
+    zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -239,7 +236,7 @@ def getStopSignScatterPlot(
         go.Figure: A scatter plot which shows the roadFeatures
     """
     layout = sharedFunctionsPlotly.getPlotLayout(
-        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y
+        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y, zoomLevel=zoomLevel
     )
     x, y = extractStopSigns(scenario=scenario)
 

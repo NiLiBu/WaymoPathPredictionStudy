@@ -3,8 +3,7 @@ import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 import math
 
-
-def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario):
+def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario, zoomLevel):
     """
         Get all lanes together with their lane state at the beginning
 
@@ -12,7 +11,7 @@ def getDynamicLaneStates(centerCoord_x: int, centerCoord_y: int, scenario: scena
         list[list[float]]: [x[float] , y[float] , laneState[float]]
     """
     layout = sharedFunctionsPlotly.getPlotLayout(
-        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y
+        centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y, zoomLevel=zoomLevel
     )
     
     layout.updatemenus=[dict(

@@ -5,7 +5,7 @@ import math
 import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 
 
-def getRandomAgent(scenario: scenario_pb2.Scenario):
+def getAgentParams(scenario: scenario_pb2.Scenario, trackID = None):
     """
     
     UNUSED FUNCTION IS NO LONGER MAINTAINED
@@ -22,7 +22,8 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
     for track in scenario.tracks_to_predict:
         trackIsToPredict.append(track.track_index)
 
-    trackForPrediction = random.choice(trackIsToPredict)
+
+    
 
     trackIdList = []
 
@@ -37,16 +38,21 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
     
     # as long as no final Coords value is found try again
     while True:
-        trackForPrediction = random.choice(trackIsToPredict)
+        # check if trackID is allready defined don't change anything
+        if trackID == None:
+            print("TRACK ID NEU BELEGT")
+            trackForPrediction = random.choice(trackIsToPredict)
+        else:
+            print("TRACK ID BELEGUNG - %s" % trackID)
+            trackForPrediction = trackID
 
         for trackIndex, trackId in trackIdList:
 
-            trackToPredict = trackIndex == trackForPrediction
 
             for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
                 if state.valid:
                         
-                    if stateIndex == 9 and trackToPredict:
+                    if stateIndex == 9 and trackIndex == trackForPrediction:
                         centerValue = [
                             state.center_x,
                             state.center_y,
@@ -57,16 +63,16 @@ def getRandomAgent(scenario: scenario_pb2.Scenario):
                         ]
                         trackToPredictSize = [state.length, state.width]
                         direction = state.heading * 180 / math.pi
-                    if stateIndex == 90 and trackToPredict:
+                    if stateIndex == 90 and trackIndex == trackForPrediction:
                         finalCoords = [
                             state.center_x,
                             state.center_y,
                         ]
+                        
+                        
+                        print("TRACK TO PREDICT IS %s " % trackForPrediction)
                         return centerValue, speedValue, finalCoords, trackToPredictSize, direction, trackForPrediction 
                     
-
-    
-
 
 def getAllAgentsScatterPlot(
     centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario

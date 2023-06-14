@@ -1,13 +1,13 @@
 import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 
-
 def getDragAndDropFigure(   
     mapCenter_x: float,
     mapCenter_y: float,
+    zoomLevel
 ):
     layout = sharedFunctionsPlotly.getDragAndDropLayout(
-        centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y
+        centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y, zoomLevel=zoomLevel
     )
     
 
@@ -27,6 +27,7 @@ def getPredictionFigure(
     rotation: float,
     mapCenter_x: float,
     mapCenter_y: float,
+    zoomLevel
 ):
     x, y = sharedFunctionsPlotly.getPolygonCoordsFromCenterCoords(
         center_x=xStart, center_y=yStart, degrees=rotation, width=width, length=lenght
@@ -46,7 +47,7 @@ def getPredictionFigure(
     
     
     layout = sharedFunctionsPlotly.getPlotLayout(
-        centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y
+        centerCoord_x=mapCenter_x, centerCoord_y=mapCenter_y, zoomLevel=zoomLevel
     )
     plotPredict = go.Scattergl(
         x=[xPredict],

@@ -2,19 +2,8 @@ import plotly.graph_objects as go
 import math
 
 GRAPH_SIZE = 1000
-RANGE_DELTA = 100
 
-def zoomOut():
-    global RANGE_DELTA
-    RANGE_DELTA = RANGE_DELTA * 1.4
-    
-    
-def zoomIn():
-    global RANGE_DELTA
-    RANGE_DELTA = RANGE_DELTA * 0.6
-
-
-def getPlotLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
+def getPlotLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> go.Layout:
     """
     Generate a Layout that can be used for all Plots
 
@@ -36,17 +25,16 @@ def getPlotLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
         template="simple_white",
         showlegend=False,
         xaxis_range=[
-            int(centerCoord_x - RANGE_DELTA),
-            int(centerCoord_x + RANGE_DELTA),
+            int(centerCoord_x - zoomLevel),
+            int(centerCoord_x + zoomLevel),
         ],
         yaxis_range=[
-            int(centerCoord_y - RANGE_DELTA),
-            int(centerCoord_y + RANGE_DELTA),
+            int(centerCoord_y - zoomLevel),
+            int(centerCoord_y + zoomLevel),
         ],
     )
 
-
-def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
+def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> go.Layout:
     """
     Generate a Layout that can be used for all Plots
 
@@ -70,12 +58,12 @@ def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int) -> go.Layout:
         dragmode="drawline",
         newshape={"line": {"color": "rgba(0, 0, 0, 0)"}},
         xaxis_range=[
-            (centerCoord_x - RANGE_DELTA),
-            (centerCoord_x + RANGE_DELTA),
+            (centerCoord_x - zoomLevel),
+            (centerCoord_x + zoomLevel),
         ],
         yaxis_range=[
-            (centerCoord_y - RANGE_DELTA - 19 * 100/RANGE_DELTA),
-            (centerCoord_y + RANGE_DELTA - 19 * 100/RANGE_DELTA),
+            (centerCoord_y - zoomLevel - 19 * 100/zoomLevel),
+            (centerCoord_y + zoomLevel - 19 * 100/zoomLevel),
         ],
     )
 
@@ -108,7 +96,6 @@ def getPolygonCoordsFromCenterCoords(
     Ry4 = center_y + (width / 2 * math.sin(rad)) + (length / 2 * math.cos(rad))
 
     return [Rx1, Rx2, Rx3, Rx4, Rx1], [Ry1, Ry2, Ry3, Ry4, Ry1]
-
 
 def getPolygonCoordsFromCenterCoordsForMultipleInstances(
     center_x: float, center_y: float, degrees: int, width: float, length: float
