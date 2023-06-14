@@ -3,6 +3,7 @@ import math
 
 GRAPH_SIZE = 1000
 
+
 def getPlotLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> go.Layout:
     """
     Generate a Layout that can be used for all Plots
@@ -34,7 +35,10 @@ def getPlotLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> go.Layou
         ],
     )
 
-def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> go.Layout:
+
+def getDragAndDropLayout(
+    centerCoord_x: int, centerCoord_y: int, zoomLevel
+) -> go.Layout:
     """
     Generate a Layout that can be used for all Plots
 
@@ -62,8 +66,8 @@ def getDragAndDropLayout(centerCoord_x: int, centerCoord_y: int, zoomLevel) -> g
             (centerCoord_x + zoomLevel),
         ],
         yaxis_range=[
-            (centerCoord_y - zoomLevel - 19 * 100/zoomLevel),
-            (centerCoord_y + zoomLevel - 19 * 100/zoomLevel),
+            (centerCoord_y - zoomLevel - 19 * 100 / zoomLevel),
+            (centerCoord_y + zoomLevel - 19 * 100 / zoomLevel),
         ],
     )
 
@@ -96,6 +100,7 @@ def getPolygonCoordsFromCenterCoords(
     Ry4 = center_y + (width / 2 * math.sin(rad)) + (length / 2 * math.cos(rad))
 
     return [Rx1, Rx2, Rx3, Rx4, Rx1], [Ry1, Ry2, Ry3, Ry4, Ry1]
+
 
 def getPolygonCoordsFromCenterCoordsForMultipleInstances(
     center_x: float, center_y: float, degrees: int, width: float, length: float

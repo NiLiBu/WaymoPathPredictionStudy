@@ -8,6 +8,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # after disabled warnings import tf
 import tensorflow
 
+
 def getWaymoScenario(fileNumber: int, scenarioNumber: int) -> scenario_pb2.Scenario:
     """
     Get an Waymo Open Dataset Scenario

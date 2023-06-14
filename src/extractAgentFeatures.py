@@ -5,9 +5,9 @@ import math
 import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 
 
-def getAgentParams(scenario: scenario_pb2.Scenario, trackID = None):
+def getAgentParams(scenario: scenario_pb2.Scenario, trackID=None):
     """
-    
+
     UNUSED FUNCTION IS NO LONGER MAINTAINED
 
     Args:
@@ -22,9 +22,6 @@ def getAgentParams(scenario: scenario_pb2.Scenario, trackID = None):
     for track in scenario.tracks_to_predict:
         trackIsToPredict.append(track.track_index)
 
-
-    
-
     trackIdList = []
 
     for trackIndex, track in enumerate(scenario.tracks):
@@ -35,23 +32,18 @@ def getAgentParams(scenario: scenario_pb2.Scenario, trackID = None):
     finalCoords = []
     trackToPredictSize = []
     direction = 0
-    
+
     # as long as no final Coords value is found try again
     while True:
         # check if trackID is allready defined don't change anything
         if trackID == None:
-            print("TRACK ID NEU BELEGT")
             trackForPrediction = random.choice(trackIsToPredict)
         else:
-            print("TRACK ID BELEGUNG - %s" % trackID)
             trackForPrediction = trackID
 
         for trackIndex, trackId in trackIdList:
-
-
             for stateIndex, state in enumerate(scenario.tracks[trackIndex].states):
                 if state.valid:
-                        
                     if stateIndex == 9 and trackIndex == trackForPrediction:
                         centerValue = [
                             state.center_x,
@@ -68,11 +60,16 @@ def getAgentParams(scenario: scenario_pb2.Scenario, trackID = None):
                             state.center_x,
                             state.center_y,
                         ]
-                        
-                        
-                        print("TRACK TO PREDICT IS %s " % trackForPrediction)
-                        return centerValue, speedValue, finalCoords, trackToPredictSize, direction, trackForPrediction 
-                    
+
+                        return (
+                            centerValue,
+                            speedValue,
+                            finalCoords,
+                            trackToPredictSize,
+                            direction,
+                            trackForPrediction,
+                        )
+
 
 def getAllAgentsScatterPlot(
     centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario
@@ -80,37 +77,35 @@ def getAllAgentsScatterPlot(
     layout = sharedFunctionsPlotly.getPlotLayout(
         centerCoord_x=centerCoord_x, centerCoord_y=centerCoord_y
     )
-    
-    layout.updatemenus=[dict(
+
+    layout.updatemenus = [
+        dict(
             type="buttons",
-            direction = "left",
-            buttons=list([
-                dict(
-                    args=[
-                        None, 
-                        {
-                            "frame": {
-                                "duration": 100, 
-                                "redraw": False
+            direction="left",
+            buttons=list(
+                [
+                    dict(
+                        args=[
+                            None,
+                            {
+                                "frame": {"duration": 100, "redraw": False},
+                                "fromcurrent": True,
+                                "transition": {"duration": 0},
                             },
-                            "fromcurrent": True, 
-                            "transition": {
-                                "duration": 0
-                            }
-                        }
-                    ],
-                    label="Abspielen der aktuellen Verkehrssituation",
-                    method="animate"
-                ),
-            ]),
+                        ],
+                        label="Abspielen der aktuellen Verkehrssituation",
+                        method="animate",
+                    ),
+                ]
+            ),
             pad={"r": 10, "t": 10},
             showactive=True,
             x=0.11,
             xanchor="left",
             y=1.1,
-            yanchor="top"
-            )
-        ]
+            yanchor="top",
+        )
+    ]
 
     # trackType = {
     #     0: "Undefined",
@@ -119,20 +114,18 @@ def getAllAgentsScatterPlot(
     #     3: "Cyclist",
     #     4: "Other",
     # }
-    
-    
+
     FRAMES_TO_PLOT = 10
-    
+
     x = []
     y = []
     plot = []
     frames = []
-    
+
     for i in range(FRAMES_TO_PLOT):
         x.append([])
         y.append([])
         plot.append([])
-
 
     for track in scenario.tracks:
         for stateIndex, state in enumerate(track.states):
@@ -152,25 +145,28 @@ def getAllAgentsScatterPlot(
                 y[stateIndex].extend(y_addition)
 
     for index, element in enumerate(x):
-        plot[index] = go.Scatter(
+        plot[index] = go.Scattergl(
             x=x[index],
             y=y[index],
             hoverinfo="skip",
             mode="none",
             fill="toself",
-            fillcolor='rgba(0,0,255, 1)',
+            fillcolor="rgba(0,0,255, 1)",
         )
-        
-        frames.append(go.Frame(data=go.Scatter(
-            x=x[index],
-            y=y[index],
-            hoverinfo="skip",
-            mode="none",
-            fill="toself",
-            fillcolor='rgba(0,0,255, 1)',
-        )))
-        
-    
+
+        frames.append(
+            go.Frame(
+                data=go.Scattergl(
+                    x=x[index],
+                    y=y[index],
+                    hoverinfo="skip",
+                    mode="none",
+                    fill="toself",
+                    fillcolor="rgba(0,0,255, 1)",
+                )
+            )
+        )
+
     return go.Figure(
         data=[plot[0]],
         layout=layout,

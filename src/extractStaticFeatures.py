@@ -3,9 +3,8 @@ import src.sharedFunctionsPlotly as sharedFunctionsPlotly
 import plotly.graph_objects as go
 from PIL import Image
 
-def extractRoadFeatures(
-    scenario: scenario_pb2.Scenario
-) -> list[list[int]]:
+
+def extractRoadFeatures(scenario: scenario_pb2.Scenario) -> list[list[int]]:
     """
     Extract road lines, road lanes and road edges from the dataset
 
@@ -37,11 +36,9 @@ def extractRoadFeatures(
 
     return [x, y, size]
 
+
 def getRoadFeaturesScatterPlot(
-    centerCoord_x: int,
-    centerCoord_y: int,
-    scenario: scenario_pb2.Scenario,
-    zoomLevel
+    centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario, zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -75,6 +72,7 @@ def getRoadFeaturesScatterPlot(
         data=[plot],
         layout=layout,
     )
+
 
 def extractStaticPolynomials(
     scenario: scenario_pb2.Scenario,
@@ -119,11 +117,9 @@ def extractStaticPolynomials(
 
     return x_speed_bump, y_speed_bump, x_crosswalk, y_crosswalk, x_driveway, y_driveway
 
+
 def getPolygonFeaturesScatterPlot(
-    centerCoord_x: int,
-    centerCoord_y: int,
-    scenario: scenario_pb2.Scenario,
-    zoomLevel
+    centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario, zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -194,9 +190,8 @@ def getPolygonFeaturesScatterPlot(
         layout=layout,
     )
 
-def extractStopSigns(
-    scenario: scenario_pb2.Scenario
-) -> list[list[int]]:
+
+def extractStopSigns(scenario: scenario_pb2.Scenario) -> list[list[int]]:
     """
     Gets all points of stop signs
 
@@ -219,11 +214,9 @@ def extractStopSigns(
 
     return x, y
 
+
 def getStopSignScatterPlot(
-    centerCoord_x: int,
-    centerCoord_y: int,
-    scenario: scenario_pb2.Scenario,
-    zoomLevel
+    centerCoord_x: int, centerCoord_y: int, scenario: scenario_pb2.Scenario, zoomLevel
 ) -> go.Figure:
     """
     Generate a scatter plot which shows the roadFeatures
@@ -262,9 +255,7 @@ def getStopSignScatterPlot(
     for index in range(len(x)):
         figure.add_layout_image(
             dict(
-                source=Image.open(
-                    "assets/stopSign.png"
-                ),
+                source=Image.open("assets/stopSign.png"),
                 xref="x",
                 yref="y",
                 x=x[index],
