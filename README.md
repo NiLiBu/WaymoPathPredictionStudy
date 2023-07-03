@@ -9,3 +9,15 @@ See the [Dash Documentation](https://dash.plotly.com/introduction) for more info
 ## Running the App
 
 Run `src/app.py` and navigate to http://127.0.0.1:8050/ in your browser.
+
+Die Gunicorn App kann gestartet werden mit 
+
+    gunicorn gunicorn src.app:server
+
+Dazu muss das venv installiert und aktiviert werden
+
+    python3.10 -m venv PlotlyDash/
+    source PlotlyDash/bin/activate
+    pip install -r requirements.txt
+    docker build -t study .
+    docker run -p 8080:80 study
